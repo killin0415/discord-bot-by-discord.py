@@ -1,4 +1,6 @@
 # windows:
-_pycache_
+__pycache__
+
+*log
 
 data.json
