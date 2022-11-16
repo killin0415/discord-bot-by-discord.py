@@ -21,6 +21,8 @@ class aclient(commands.Bot):
         
         date = datetime.date.today().strftime("%Y.%m.%d")
         self.path = f"logs/{date}/"
+        if not os.path.exists(self.path):
+            os.mkdir(self.path)
         
         self._guilds = [discord.Object(id=i) for i in data["guilds"]]
         
