@@ -6,9 +6,14 @@ import logging
 import os
 import asyncio
 import sys
+import datetime
+from datetime import timedelta, timezone
+import shutil
 
 if not os.path.exists("logs/"):
     os.mkdir("logs/")
+if not os.path.exists("logs/history/"):
+    os.mkdir("logs/history/")
 
 with open("data.json", 'r') as DataFiles:
     data = json.load(DataFiles)
@@ -84,12 +89,18 @@ async def self(interaction: discord.Integration):
 async def shutdown(interaction: discord.Interaction):
     try:
         await interaction.response.send_message("bot has logged out successfully.", ephemeral=True)
+        
         log.info("[Server] server closed")
+        newfilename = datetime.datetime.now(tz=timezone(offset=timedelta(hours=8))).strftime("%Y.%m.%d.%H.%M")
+        log.info(f"[Server] server closed in {newfilename}.")
+        shutil.copyfile("logs/main.log", f"logs/history/{newfilename}.log")
+        
         await asyncio.sleep(1)
         await client.close()
     except Exception as e:
         await interaction.response.send_message("error.", ephemeral=True)
         log.error(e)
+        exit()
           
 if __name__ == "__main__":
     client.run(TOKEN)
