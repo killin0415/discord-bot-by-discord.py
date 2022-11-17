@@ -3,8 +3,9 @@ from discord import app_commands
 from discord.ext import commands
 import json
 import logging
-import datetime
 import os
+import asyncio
+import sys
 
 with open("data.json", 'r') as DataFiles:
     data = json.load(DataFiles)
@@ -19,13 +20,10 @@ class aclient(commands.Bot):
         self.synced=False
         self.initial_extensions = []
         
-        date = datetime.date.today().strftime("%Y.%m.%d")
-        self.path = f"logs/{date}/"
-        if not os.path.exists(self.path):
-            os.mkdir(self.path)
+        self.path = f"logs/"
         
         self._guilds = [discord.Object(id=i) for i in data["guilds"]]
-        
+        self.tree.copy_global_to(guild=self._guilds[0])
         folder = [filename for filename in os.listdir("./cmds")]
         for filename in folder:
                 if filename.endswith('.py'):
@@ -51,7 +49,7 @@ class aclient(commands.Bot):
                     guild = self.get_guild(i.id)
                     log.info(f"synced with {guild.name}")  
                 self.synced = True
-            logged = f"[Login] Bot has been login as {self.user}."
+            logged = f"[Server] Bot has been login as {self.user}."
             log.info(logged)
         except Exception as e:
             log.error(e)
@@ -65,6 +63,10 @@ main_log_path = client.path + "main.log"
 logging.basicConfig(filename=main_log_path,level=logging.INFO, encoding='utf-8', filemode='w',
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
+formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(formatter)
+log.addHandler(handler)
 
 if not os.path.exists(client.path):
     os.mkdir(client.path)
@@ -75,13 +77,21 @@ async def self(interaction: discord.Integration):
     log.info("[Slash commands] " + msg)
     await interaction.response.send_message(f"hello, {interaction.user.name}.")
 
-                
-if __name__ == "__main__":
+
+@tree.command(name="shutdown", guilds=client._guilds)
+@commands.is_owner()
+async def shutdown(interaction: discord.Interaction):
     try:
-        client.run(TOKEN)
-    except RuntimeError:
+        await interaction.response.send_message("bot has logged out successfully.", ephemeral=True)
         log.info("[Server] server closed")
+        await asyncio.sleep(1)
+        await client.close()
     except Exception as e:
-        log.error(f"[error] {e}")
+        await interaction.response.send_message("error.", ephemeral=True)
+        log.error(e)
+          
+if __name__ == "__main__":
+    client.run(TOKEN)
+    
 
     
