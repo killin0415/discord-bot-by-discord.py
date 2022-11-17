@@ -7,10 +7,11 @@ import os
 import asyncio
 import sys
 
+if not os.path.exists("logs/"):
+    os.mkdir("logs/")
+
 with open("data.json", 'r') as DataFiles:
     data = json.load(DataFiles)
- 
-
 
 log = logging.getLogger("main")
  
