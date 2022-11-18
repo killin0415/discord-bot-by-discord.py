@@ -7,6 +7,9 @@ your `data.json` should look like:
     "token": \\put your bot token here.\\,
     "guilds": [
         \\put all the server id where your bot connected here as a list.\\
+    ],
+    "administrators":[
+        \\put your server's administrators' ids here.\\
     ]
 }
 ```
