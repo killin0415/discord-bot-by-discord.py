@@ -1,4 +1,3 @@
-from core.classes import Cog_Extention
 import discord
 from discord.ext import commands, tasks
 import datetime 

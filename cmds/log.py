@@ -9,7 +9,6 @@ import os
 class Log(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
-        self.log = logging.getLogger("main")
         
     
     @app_commands.command(name="log", description="get the bot's log.", )
@@ -19,7 +18,7 @@ class Log(commands.Cog):
         guild = interaction.guild
         
         await interaction.response.send_message("here you are.", file=discord.File(file_path), ephemeral=True)
-        self.log.info(f"[slash command] sending logs to {user} in {guild.name}")
+        self.client.log.info(f"[slash command] sending logs to {user} in {guild.name}")
         
 async def setup(client):
     await client.add_cog(Log(client), guilds=client._guilds)
