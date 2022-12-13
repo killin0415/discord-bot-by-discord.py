@@ -15,7 +15,7 @@ if not os.path.exists("logs/"):
 if not os.path.exists("logs/history/"):
     os.mkdir("logs/history/")
 
-with open("data.json", 'r') as DataFiles:
+with open("database/data.json", 'r') as DataFiles:
     data = json.load(DataFiles)
 
 
@@ -67,12 +67,14 @@ client = aclient()
 tree = client.tree
 
 main_log_path = client.path + "main.log"
-logging.basicConfig(filename=main_log_path,level=logging.INFO, encoding='utf-8', filemode='w',
-                    format='%(asctime)s %(levelname)-8s %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
+# client.log = logging.getLogger()
+client.log.setLevel(logging.INFO)
+handler = logging.FileHandler(main_log_path, 'w', 'utf-8')
 formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(formatter)
+client.log.addHandler(handler)
+
+handler = logging.StreamHandler(sys.stdout)
 client.log.addHandler(handler)
 
 if not os.path.exists(client.path):

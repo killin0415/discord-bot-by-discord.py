@@ -1,7 +1,7 @@
 import json
 from discord import Interaction
 
-with open("data.json", 'r') as DataFiles:
+with open("database/data.json", 'r') as DataFiles:
     data = json.load(DataFiles)
 
 def slash_check(interaction: Interaction):
